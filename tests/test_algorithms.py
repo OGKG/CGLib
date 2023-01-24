@@ -18,7 +18,7 @@ from CGLib.models import (
     Hull
 )
 
-from CGLib.stripe_method import stripe
+from CGLib.slab_method import slab
 from CGLib.kd_tree_method import kd_tree
 from CGLib.jarvis import jarvis
 from CGLib.graham import graham
@@ -33,7 +33,7 @@ from CGLib.divide_and_conquer_hull import divide_and_conquer_hull
 class TestAlgorithms(TestCase):
     """algorithm tests."""
 
-    def test_stripe(self):
+    def test_slab(self):
         p1 = Vertex(Point(7, 0))
         p2 = Vertex(Point(2, 2.5))
         p3 = Vertex(Point(12, 3))
@@ -65,7 +65,7 @@ class TestAlgorithms(TestCase):
 
         dot = Point(11.5, 5.5)
 
-        ans = list(stripe(g, dot))
+        ans = list(slab(g, dot))
         self.assertEqual(
             ans[0],
             [

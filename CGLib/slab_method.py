@@ -2,19 +2,19 @@ import functools as f
 from .models import Point, Graph
 
 
-def stripe(g: Graph, dot: Point):
+def slab(g: Graph, dot: Point):
     """Stripe method for dot localization."""
     separators = sorted(set(map(lambda x: x[1], g.vertices)))
     separators = [float("-inf")] + separators + [float("inf")]
-    stripes = []
+    slabs = []
     for separ in range(len(separators) - 1):
-        stripes.append((separators[separ], separators[separ + 1]))
-    yield stripes
-    table = first_stage(stripes, g)
+        slabs.append((separators[separ], separators[separ + 1]))
+    yield slabs
+    table = first_stage(slabs, g)
     yield table
-    stripe = find_stripe(stripes, dot)
-    yield stripe
-    edges_to_check = sorted_edges_in_stripe(table[stripe], stripe)
+    slab = find_slab(slabs, dot)
+    yield slab
+    edges_to_check = sorted_edges_in_slab(table[slab], slab)
     yield check_edges(edges_to_check, dot)
 
 
@@ -25,18 +25,18 @@ def edge_value_in_y(edge, y):
     return (x2 - x1) * (y - y1) / (y2 - y1) + x1
 
 
-def sorted_edges_in_stripe(edges, stripe):
-    stripe_median = sum(stripe) / 2
-    return sorted(edges, key=f.partial(edge_value_in_y, y=stripe_median))
+def sorted_edges_in_slab(edges, slab):
+    slab_median = sum(slab) / 2
+    return sorted(edges, key=f.partial(edge_value_in_y, y=slab_median))
 
 
-def edge_in_stripe(self, stripe):
-    """True if edge y projection overlaps stripe y region."""
+def edge_in_slab(self, slab):
+    """True if edge y projection overlaps slab y region."""
     return (
-        self.v1.point.y <= stripe[0]
-        and self.v2.point.y >= stripe[1]
-        or self.v2.point.y <= stripe[0]
-        and self.v1.point.y >= stripe[1]
+        self.v1.point.y <= slab[0]
+        and self.v2.point.y >= slab[1]
+        or self.v2.point.y <= slab[0]
+        and self.v1.point.y >= slab[1]
     )
 
 
@@ -54,22 +54,22 @@ def position_dot_edge(dot, edge):
     return (x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1)
 
 
-def first_stage(stripes, g: Graph):
-    """Return list of tuples (lower, upper) bounds for each stripes."""
+def first_stage(slabs, g: Graph):
+    """Return list of tuples (lower, upper) bounds for each slabs."""
     ans = {}
-    for stripe in stripes:
-        ans.update({stripe: list(filter(lambda x: edge_in_stripe(x, stripe), g.edges))})
+    for slab in slabs:
+        ans.update({slab: list(filter(lambda x: edge_in_slab(x, slab), g.edges))})
     return ans
 
 
-def dot_in_stripe(dot, stripe):
-    """True if dot.y is in horizontal stripe."""
-    return stripe[0] < dot.y <= stripe[1]
+def dot_in_slab(dot, slab):
+    """True if dot.y is in horizontal slab."""
+    return slab[0] < dot.y <= slab[1]
 
 
-def find_stripe(stripes, dot):
-    """Return stripe in which dot is located from stripe list."""
-    return filter(lambda x: dot_in_stripe(dot, x), stripes).__next__()
+def find_slab(slabs, dot):
+    """Return slab in which dot is located from slab list."""
+    return filter(lambda x: dot_in_slab(dot, x), slabs).__next__()
 
 
 def dot_between_edges(dot, edges):
