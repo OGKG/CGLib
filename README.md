@@ -10,7 +10,7 @@ This module contains implementations for computational geometry algorithms based
   * *Triangulation refinement method **(TBD)***: locate a point in a triangulated planar graph in one of the triangles.
 * Range-searching
   * *k-D tree method*: find out which or how many points of a given set lie in a specified range, using a multidimensional binary tree (here, 2-*D* tree).
-  * *Range-tree method **(TBD)***: find out which or how many points of a given set lie in a specified range, using a range tree data structure.
+  * *Range-tree method*: find out which or how many points of a given set lie in a specified range, using a range tree data structure.
   * *Loci method*: find out how many points of a given set lie in a specified range, using a region (locus) partition of the searching space.
 #### Constructing convex hulls
 * Static problem
@@ -22,6 +22,6 @@ This module contains implementations for computational geometry algorithms based
   * *Preparata's algorithm **(TBD)***: construct the convex hull of a set of points being dynamically added to a current hull.
   * *Dynamic convex hull maintenance **(TBD)***: construct the convex hull of a set of points and re-construct it on addition or deletion of a point.
 #### Proximity problems
-* *Divide-and-conquer closest pair search **(TBD)***: given a set of points, find the two points with the smallest mutual distance, using divide-and-conquer approach.
+* *Divide-and-conquer closest pair search*: given a set of points, find the two points with the smallest mutual distance, using divide-and-conquer approach.
 * *Divide-and-conquer Voronoi diagram constructing **(TBD)***: given a set points, construct their Voronoi diagram, using divide-and-conquer approach.
 
