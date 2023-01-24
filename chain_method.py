@@ -1,9 +1,6 @@
 from math import pi
 from collections import OrderedDict
-from ..models.point import Point
-from ..models.bin_tree_node import NodeWithParent
-from ..models.bin_tree import ChainsBinTree
-from ..models.graph import OrientedGraph
+from models import Point, NodeWithParent, ChainsBinTree, OrientedGraph
 
 
 def chain_method(graph: OrientedGraph, point: Point):

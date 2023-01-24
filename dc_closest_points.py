@@ -1,6 +1,7 @@
 from sys import maxsize
 from typing import Tuple, List
-from ..models.point import Point
+from models import Point
+
 
 def closest_points(points: List[Point]):
     Ux, Uy = init_points(points)
@@ -14,9 +15,7 @@ def init_points(points: List[Point]):
     return Ux, Uy
 
 
-def closest_pair_split(
-    points_sorted_x: List[Point], points_sorted_y: List[Point], delta: float
-):
+def closest_pair_split(points_sorted_x: List[Point], points_sorted_y: List[Point], delta: float):
     """Finding closest pair of points splited by the line"""
     length_x = len(points_sorted_x)
     middle = length_x // 2
