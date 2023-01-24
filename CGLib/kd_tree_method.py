@@ -1,4 +1,4 @@
-from models import Node, KdTree
+from .models import Node, KdTree
 
 
 def kd_tree(points, x_range, y_range):

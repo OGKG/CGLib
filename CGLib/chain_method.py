@@ -1,6 +1,6 @@
 from math import pi
 from collections import OrderedDict
-from models import Point, NodeWithParent, ChainsBinTree, OrientedGraph
+from .models import Point, NodeWithParent, ChainsBinTree, OrientedGraph
 
 
 def chain_method(graph: OrientedGraph, point: Point):

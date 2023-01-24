@@ -2,7 +2,7 @@ import math
 from copy import deepcopy
 from unittest import TestCase
 from collections import OrderedDict
-from models import (
+from CGLib.models import (
     Point,
     Vertex,
     Edge,
@@ -18,16 +18,16 @@ from models import (
     Hull
 )
 
-from stripe_method import stripe
-from kd_tree_method import kd_tree
-from jarvis import jarvis
-from graham import graham
-from quickhull import quickhull
-from loci import Loci
-from chain_method import chain_method
-from dc_closest_points import closest_points
-from region_tree_method import region_tree_method
-from divide_and_conquer_hull import divide_and_conquer_hull
+from CGLib.stripe_method import stripe
+from CGLib.kd_tree_method import kd_tree
+from CGLib.jarvis import jarvis
+from CGLib.graham import graham
+from CGLib.quickhull import quickhull
+from CGLib.loci import Loci
+from CGLib.chain_method import chain_method
+from CGLib.dc_closest_points import closest_points
+from CGLib.region_tree_method import region_tree_method
+from CGLib.divide_and_conquer_hull import divide_and_conquer_hull
 
 
 class TestAlgorithms(TestCase):
