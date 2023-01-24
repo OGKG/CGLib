@@ -1,5 +1,5 @@
 import functools as f
-from models import Point, Graph
+from .models import Point, Graph
 
 
 def stripe(g: Graph, dot: Point):

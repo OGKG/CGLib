@@ -1,4 +1,4 @@
-from models import Point
+from .models import Point
 
 
 def jarvis(points):

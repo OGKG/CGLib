@@ -1,6 +1,6 @@
 from sys import maxsize
 from typing import Tuple, List
-from models import Point
+from .models import Point
 
 
 def closest_points(points: List[Point]):

@@ -1,6 +1,6 @@
 import unittest
 import math
-from models import Point, Vertex, Graph, Vector, Triangle, Polygon, Hull
+from CGLib.models import Point, Vertex, Graph, Vector, Triangle, Polygon, Hull
 
 
 class TestModels(unittest.TestCase):

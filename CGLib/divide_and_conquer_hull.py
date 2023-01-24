@@ -1,5 +1,5 @@
-from models import Point
-from graham import graham
+from .models import Point
+from .graham import graham
 
 
 def divide_and_conquer_hull(hull1, hull2):
