@@ -1,5 +1,5 @@
 from math import pi
-from ..models.point import Point
+from models import Point
 
 
 def graham(points):

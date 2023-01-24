@@ -2,25 +2,32 @@ import math
 from copy import deepcopy
 from unittest import TestCase
 from collections import OrderedDict
+from models import (
+    Point,
+    Vertex,
+    Edge,
+    OrientedEdge,
+    Graph,
+    OrientedGraph,
+    Node,
+    QuickhullNode, NodeWithParent,
+    BinTree,
+    ChainsBinTree,
+    KdTree,
+    Polygon,
+    Hull
+)
 
-
-from ..models.point import Point
-from ..models.vertex import Vertex
-from ..models.edge import Edge, OrientedEdge
-from ..models.graph import Graph, OrientedGraph
-from ..models.bin_tree_node import Node, QuickhullNode, NodeWithParent
-from ..models.bin_tree import BinTree, ChainsBinTree, KdTree
-
-
-from ..algo.stripe_method import stripe
-from ..algo.kd_tree_method import kd_tree
-from ..algo.jarvis import jarvis
-from ..algo.graham import graham
-from ..algo.quickhull import quickhull
-from ..algo.loci import Loci
-from ..algo.chain_method import chain_method
-from ..algo.dc_closest_points import closest_points
-from ..algo.region_tree_method import region_tree_method
+from stripe_method import stripe
+from kd_tree_method import kd_tree
+from jarvis import jarvis
+from graham import graham
+from quickhull import quickhull
+from loci import Loci
+from chain_method import chain_method
+from dc_closest_points import closest_points
+from region_tree_method import region_tree_method
+from divide_and_conquer_hull import divide_and_conquer_hull
 
 
 class TestAlgorithms(TestCase):
@@ -505,9 +512,9 @@ class TestAlgorithms(TestCase):
             }
         )
 
-        e1_balanced = copy.deepcopy(e1)
+        e1_balanced = deepcopy(e1)
         e1_balanced.weight = 2
-        e5_balanced = copy.deepcopy(e5)
+        e5_balanced = deepcopy(e5)
         e5_balanced.weight = 2
         weight_table_balanced = {
             v1: {"vin": [], "vout": [e1_balanced, e2], "win": 0, "wout": 3},
@@ -623,3 +630,45 @@ class TestAlgorithms(TestCase):
         self.assertEqual([3, 7], next(ans))
         self.assertEqual(ps, next(ans))
         self.assertEqual(ss, next(ans))
+    
+    def test_divide_and_conquer_hull1(self):
+        p1 = Point(2, 2)
+        p2 = Point(2, -2)
+        p3 = Point(-2, -2)
+        p4 = Point(-2, 2)
+        r1 = Polygon((p1, p2, p3, p4))
+        p1 = Point(3, 0)
+        p2 = Point(0, -3)
+        p3 = Point(-3, 0)
+        p4 = Point(0, 3)
+        r2 = Polygon((p1, p2, p3, p4))
+
+        h = divide_and_conquer_hull(Hull(r1), Hull(r2))
+        self.assertEqual(
+            h,
+            [
+                Point(0, -3),
+                Point(2, -2),
+                Point(3, 0),
+                Point(2, 2),
+                Point(0, 3),
+                Point(-2, 2),
+                Point(-3, 0),
+                Point(-2, -2)
+            ]
+        )
+
+    def test_divide_and_conquer_hull2(self):
+        p1 = Point(2, 2)
+        p2 = Point(2, 0)
+        p3 = Point(0, 0)
+        p4 = Point(0, 2)
+        r1 = Polygon((p1, p2, p3, p4))
+        p1 = Point(-2, -2)
+        p2 = Point(-2, 0)
+        p3 = Point(0, -1)
+        p4 = Point(0, -2)
+        r2 = Polygon((p1, p2, p3, p4))
+
+        h = divide_and_conquer_hull(Hull(r1), Hull(r2))
+        self.assertEqual(h, [Point(0, -2), Point(2, 0), Point(2, 2), Point(0, 2), Point(-2, 0), Point(-2, -2)])

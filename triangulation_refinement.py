@@ -1,6 +1,4 @@
-from ..models.graph import Graph
-from ..models.point import Point
-from ..models.triangle import Triangle
+from models import Graph, Point, Triangle
 
 
 class Kirkpatrick:
