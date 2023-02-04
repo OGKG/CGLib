@@ -1,6 +1,7 @@
 import unittest
 import math
-from CGLib.models import Point, Vertex, Graph, Vector, Triangle, Polygon, Hull
+from copy import deepcopy
+from CGLib.models import Point, Vertex, Graph, Vector, Triangle, Polygon, ThreadedBinTreeNode, ThreadedBinTree
 
 
 class TestModels(unittest.TestCase):
@@ -83,3 +84,55 @@ class TestModels(unittest.TestCase):
         p = Polygon((p1, p2, p3, p4))
         self.assertAlmostEqual(p.area, 10000)
         self.assertAlmostEqual(p.area, 10000)
+
+    def test_threaded_bin_trees_eq(self):
+        f = root = ThreadedBinTreeNode("F")
+        b = root.left = ThreadedBinTreeNode("B")
+        a = root.left.left = ThreadedBinTreeNode("A")
+        d = root.left.right = ThreadedBinTreeNode("D")
+        c = root.left.right.left = ThreadedBinTreeNode("C")
+        e = root.left.right.right = ThreadedBinTreeNode("E")
+        g = root.right = ThreadedBinTreeNode("G")
+        i = root.right.right = ThreadedBinTreeNode("I")
+        h = root.right.right.left = ThreadedBinTreeNode("H")
+
+        root2 = deepcopy(root)
+        tree = ThreadedBinTree(root2)
+
+        a.left, a.right = i, b
+        a.threaded_left = a.threaded_right = True
+        c.left, c.right = b, d
+        c.threaded_left = c.threaded_right = True
+        e.left, e.right = d, f
+        e.threaded_left = e.threaded_right = True
+        g.left = f
+        g.threaded_left = True
+        h.left, h.right = g, i
+        h.threaded_left = h.threaded_right = True
+        i.right = a
+        i.threaded_right = True
+
+        self.assertEqual(root, tree.root)
+    
+    def test_threaded_bin_tree_from_iterable(self):
+        lst = ["A", "B", "C", "D", "E"]
+        c = root = ThreadedBinTreeNode("C")
+        a = root.left = ThreadedBinTreeNode("A")
+        b = root.left.right = ThreadedBinTreeNode("B")
+        d = root.right = ThreadedBinTreeNode("D")
+        e = root.right.right = ThreadedBinTreeNode("E")
+
+        a.left = e
+        a.threaded_left = True
+        b.left, b.right = a, c
+        b.threaded_left = b.threaded_right = True
+        d.left = c
+        d.threaded_left = True
+        e.left, e.right = d, a
+        e.threaded_left = e.threaded_right = True
+
+        tree = ThreadedBinTree(root)
+        self.assertEqual(tree, ThreadedBinTree.from_iterable(lst))
+
+        
+
