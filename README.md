@@ -19,7 +19,7 @@ This module contains implementations for computational geometry algorithms based
   * *Divide-and-conquer*: given the convex hulls of the two subsets of a given set of points, merge them into a convex hull of the entire set of points.
   * *Jarvis' march*: construct the convex hull of a given set of points, using the so-called gift wrapping technique.
 * Dynamic problem
-  * *Preparata's algorithm **(TBD)***: construct the convex hull of a set of points being dynamically added to a current hull.
+  * *Preparata's algorithm*: construct the convex hull of a set of points being dynamically added to a current hull.
   * *Dynamic convex hull maintenance **(TBD)***: construct the convex hull of a set of points and re-construct it on addition or deletion of a point.
 #### Proximity problems
 * *Divide-and-conquer closest pair search*: given a set of points, find the two points with the smallest mutual distance, using divide-and-conquer approach.
