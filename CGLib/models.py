@@ -301,12 +301,48 @@ class QuickhullNode(Node):
 
 
 class BinTree:
+    node_class = Node
+
     def __init__(self, root: Node):
         self.root = root
 
     def __eq__(self, other):
         return self.root == other.root
     
+    @classmethod
+    def from_iterable(cls, iterable):
+        return cls(cls._from_iterable(iterable))
+    
+    @classmethod
+    def _from_iterable(cls, iterable, left=0, right=None):
+        if right is None:
+            right = len(iterable)-1
+        if left > right:
+            return None
+        
+        mid = (left + right) // 2
+        node = cls.node_class(iterable[mid])
+        node.left = cls._from_iterable(iterable, left, mid-1)
+        node.right = cls._from_iterable(iterable, mid+1, right)
+
+        return node
+
+    def traverse_inorder(self, node=None, nodes=None):
+        if node is None:
+            node = self.root
+        if nodes is None:
+            nodes = []
+        
+        if node.left:
+            self.traverse_inorder(node.left, nodes)
+        
+        nodes.append(node)
+
+        if node.right:
+            self.traverse_inorder(node.right, nodes)
+        
+        return nodes
+
     @property
     def nodes(self):
         """
@@ -511,6 +547,47 @@ class RegionTree(BinTree):
         l_bound = next((x for x, val in enum if val.y >= interval[0]), None)
         r_bound = next((x for x, val in reversed(enum) if val.y <= interval[1]), None)
         return ls[l_bound:r_bound + 1] if l_bound is not None and r_bound is not None else []
+
+
+class ThreadedBinTreeNode(Node):
+    def __init__(self, data):
+        super().__init__(data)
+        self.threaded_left = False
+        self.threaded_right = False
+    
+    def __eq__(self, other):
+        """
+            Since threaded tree forms a loop, we should check the equality of its nodes
+            as if it were a regular tree (pretend threaded lefts and rights are Nones).
+        """
+        return (
+            isinstance(other, ThreadedBinTreeNode)
+            and self.data == other.data
+            and (None if self.threaded_left else self.left) == (None if other.threaded_left else other.left)
+            and (None if self.threaded_right else self.right) == (None if other.threaded_right else other.right)
+        )
+    
+    def __repr__(self):
+        return f"{self.left.data}<-{self.data}->{self.right.data}"
+
+
+class ThreadedBinTree(BinTree):
+    node_class = ThreadedBinTreeNode
+
+    @classmethod
+    def from_iterable(cls, iterable):
+        tree = super().from_iterable(iterable)
+        nodes = tree.traverse_inorder()
+        
+        for i, node in enumerate(nodes):
+            if not node.left:
+                node.left = nodes[i-1]
+                node.threaded_left = True
+            if not node.right:
+                node.right = nodes[(i+1)%len(nodes)]
+                node.threaded_right = True
+        
+        return tree
 
 
 class Line2D:
