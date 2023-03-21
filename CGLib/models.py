@@ -566,13 +566,17 @@ class ThreadedBinTree(BinTree):
     node_class = ThreadedBinTreeNode
 
     @classmethod
-    def from_iterable(cls, iterable):
+    def from_iterable(cls, iterable, circular=True):
         tree = super().from_iterable(iterable)
         nodes = tree.traverse_inorder()
         
         for i, node in enumerate(nodes):            
             node.prev = node.left if node.left else nodes[i-1]
             node.next = node.right if node.right else nodes[(i+1)%len(nodes)]
+        
+        if not circular:
+            nodes[0].prev = None
+            nodes[-1].next = None
         
         return tree
 

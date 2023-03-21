@@ -127,6 +127,15 @@ class TestModels(unittest.TestCase):
 
         tree = ThreadedBinTree(root)
         self.assertEqual(tree, ThreadedBinTree.from_iterable(lst))
+    
+    def test_threaded_bin_tree_non_circular(self):
+        b = root = ThreadedBinTreeNode("B")
+        a = root.left = ThreadedBinTreeNode("A")
+        c = root.right = ThreadedBinTreeNode("C")
 
+        a.next = b
+        b.prev, b.next = a, c
+        c.prev = b
         
-
+        tree = ThreadedBinTree(root)
+        self.assertEqual(tree, ThreadedBinTree.from_iterable(["A", "B", "C"], circular=False))
