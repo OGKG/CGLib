@@ -1,5 +1,5 @@
 from math import pi
-from .models import Point, ThreadedBinTree
+from .models import Point, ThreadedBinTree, PointType
 
 
 def preparata(points):
@@ -58,35 +58,13 @@ def find_path_to_supporting_point(tree, point, search_left_supporting):
 
 
 def find_next_node(node, point, search_left_supporting):
-
-    # [0, 2*pi) polar angle in coordinate system with axis node.data -> point (rotated against x axis by rot)
-    def polar_angle(p):
-        rot = point.ccw_polar_angle_with(node.data)
-        angle = p.ccw_polar_angle_with(node.data)
-        return angle - rot + (2 * pi if angle < rot else 0)
-
-    angles = polar_angle(node.left.data), polar_angle(node.right.data)
-    angle1 = min(angles)
-    angle2 = max(angles)
-
-    convex_or_reflex = 0 < angle1 <= pi <= angle2 < 2 * pi
-
-    # Convex
-    if convex_or_reflex and angle2 < angle1 + pi:
-        return node.right if search_left_supporting else node.left
-    
-    # Reflex
-    if convex_or_reflex and angle2 > angle1 + pi:
-        return node.left if search_left_supporting else node.right
-
-    # Left supporting
-    if 0 <= angle1 < angle2 < pi:
-        return node if search_left_supporting else node.left
-    
-    # Right supporting
-    if angle1 == 0:
-        angle1 = 2 * pi
-        angle1, angle2 = angle2, angle1
-    
-    if pi < angle1 < angle2 <= 2 * pi:
-        return node.right if search_left_supporting else node
+    point_type = PointType.point_type(point, node.data, node.prev.data, node.next.data)
+    match point_type:
+        case PointType.convex:
+            return node.next if search_left_supporting else node.prev
+        case PointType.reflex:
+            return node.prev if search_left_supporting else node.next
+        case PointType.left_supporting:
+            return node if search_left_supporting else node.prev
+        case PointType.right_supporting:
+            return node.next if search_left_supporting else node

@@ -99,18 +99,15 @@ class TestModels(unittest.TestCase):
         root2 = deepcopy(root)
         tree = ThreadedBinTree(root2)
 
-        a.left, a.right = i, b
-        a.threaded_left = a.threaded_right = True
-        c.left, c.right = b, d
-        c.threaded_left = c.threaded_right = True
-        e.left, e.right = d, f
-        e.threaded_left = e.threaded_right = True
-        g.left = f
-        g.threaded_left = True
-        h.left, h.right = g, i
-        h.threaded_left = h.threaded_right = True
-        i.right = a
-        i.threaded_right = True
+        a.prev, a.next = i, b
+        b.prev, b.next = a, c
+        c.prev, c.next = b, d
+        d.prev, d.next = c, e
+        e.prev, e.next = d, f
+        f.prev, f.next = e, g
+        g.prev, g.next = f, h
+        h.prev, h.next = g, i
+        i.prev, i.next = h, a
 
         self.assertEqual(root, tree.root)
     
@@ -122,14 +119,11 @@ class TestModels(unittest.TestCase):
         d = root.right = ThreadedBinTreeNode("D")
         e = root.right.right = ThreadedBinTreeNode("E")
 
-        a.left = e
-        a.threaded_left = True
-        b.left, b.right = a, c
-        b.threaded_left = b.threaded_right = True
-        d.left = c
-        d.threaded_left = True
-        e.left, e.right = d, a
-        e.threaded_left = e.threaded_right = True
+        a.prev, a.next = e, b
+        b.prev, b.next = a, c
+        c.prev, c.next = b, d
+        d.prev, d.next = c, e
+        e.prev, e.next = d, a
 
         tree = ThreadedBinTree(root)
         self.assertEqual(tree, ThreadedBinTree.from_iterable(lst))

@@ -1,4 +1,6 @@
 import math
+from math import pi
+from enum import Enum
 from operator import add, sub
 from functools import reduce
 from itertools import chain, cycle, dropwhile, groupby, takewhile
@@ -268,7 +270,8 @@ class Node:
     def __eq__(self, other):
         """Recursive equality."""
         return (
-            self.data == other.data
+            isinstance(other, self.__class__)
+            and self.data == other.data
             and self.left == other.left
             and self.right == other.right
         )
@@ -552,23 +555,11 @@ class RegionTree(BinTree):
 class ThreadedBinTreeNode(Node):
     def __init__(self, data):
         super().__init__(data)
-        self.threaded_left = False
-        self.threaded_right = False
-    
-    def __eq__(self, other):
-        """
-            Since threaded tree forms a loop, we should check the equality of its nodes
-            as if it were a regular tree (pretend threaded lefts and rights are Nones).
-        """
-        return (
-            isinstance(other, ThreadedBinTreeNode)
-            and self.data == other.data
-            and (None if self.threaded_left else self.left) == (None if other.threaded_left else other.left)
-            and (None if self.threaded_right else self.right) == (None if other.threaded_right else other.right)
-        )
+        self.prev = None
+        self.next = None
     
     def __repr__(self):
-        return f"{self.left.data}<-{self.data}->{self.right.data}"
+        return f"{self.left.data if self.left else ''}<-{self.data}->{self.right.data if self.right else ''}"
 
 
 class ThreadedBinTree(BinTree):
@@ -579,13 +570,9 @@ class ThreadedBinTree(BinTree):
         tree = super().from_iterable(iterable)
         nodes = tree.traverse_inorder()
         
-        for i, node in enumerate(nodes):
-            if not node.left:
-                node.left = nodes[i-1]
-                node.threaded_left = True
-            if not node.right:
-                node.right = nodes[(i+1)%len(nodes)]
-                node.threaded_right = True
+        for i, node in enumerate(nodes):            
+            node.prev = node.left if node.left else nodes[i-1]
+            node.next = node.right if node.right else nodes[(i+1)%len(nodes)]
         
         return tree
 
@@ -700,3 +687,46 @@ class Hull(Polygon):
             return Polygon(list(arc)+[point]).area
 
         return max((arc1, arc2), key=key)
+
+
+class PointType(Enum):
+    convex = 0
+    reflex = 1
+    left_supporting = 2
+    right_supporting = 3
+
+    @classmethod
+    def point_type(cls, source, target, left, right):
+        def polar_angle(p):
+            """[0, 2*pi) polar angle in coordinate system with axis target -> source (rotated against x axis by rot)"""
+            rot = source.ccw_polar_angle_with(target)
+            angle = p.ccw_polar_angle_with(target)
+            return angle - rot + (2 * pi if angle < rot else 0)
+        
+        angles = polar_angle(left), polar_angle(right)
+        angle1 = min(angles)
+        angle2 = max(angles)
+
+        convex_or_reflex = 0 < angle1 <= pi <= angle2 < 2 * pi
+
+        # Convex
+        if convex_or_reflex and angle2 < angle1 + pi:
+            return cls.convex
+        
+        # Reflex
+        if convex_or_reflex and angle2 > angle1 + pi:
+            return cls.reflex
+
+        # Left supporting
+        if 0 <= angle1 < angle2 < pi:
+            return cls.left_supporting
+        
+        # Right supporting
+        if angle1 == 0:
+            angle1 = 2 * pi
+            angle1, angle2 = angle2, angle1
+        
+        if pi < angle1 < angle2 <= 2 * pi:
+            return cls.right_supporting
+        
+        raise ValueError
